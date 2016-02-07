@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://vmi.lt/mais/sask/ws/" elementFormDefault="qualified"
+    xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vmi="http://vmi.lt/mais/sask/ws/">
+    <complexType name="LydrastisT">
+        <sequence>
+            <element name="Saskaita" type="vmi:SaskaitaT" minOccurs="1" maxOccurs="unbounded">
+            </element>
+        </sequence>
+        <attribute name="NR" type="int" use="required">
+            <annotation>
+                <documentation> TEIKĖJO suteiktas perduodamo lydraščio unikalus eilės
+                    numeris.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="ANKSTESNIS_NR" type="int">
+            <annotation>
+                <documentation>Prieš tai perduoto lydraščio unikalus numeris. Tarp
+                    einamojo lydraščio numerio ir ankstesnio lydraščio numerio negali
+                    egzistuoti kiti lydraščių numeriai, t.y., jei teikiamo lydraščio
+                    numeris yra "5", o ankstesnio - "3", tai laikoma, kad lydraščio su
+                    numeriu "4" niekada neegzistavo. Jei lydraštis su numeriu "4" buvo
+                    pateiktas, bus grąžinta klaida. Tais atvejais, kai Teikėjas pateikia
+                    pirmą lydraštį, lauko "ANKSTESNIS_NR" reikšmė turi būti 0.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="FD" type="date" use="required">
+            <annotation>
+                <documentation> Perduodamo duomenų rinkinio suformavimo data.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="FD_NUO" type="date" use="required">
+            <annotation>
+                <documentation> Data, nuo kurios pateikiami duomenys (Minimali lauko
+                    KDATA reikšmė).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="FD_IKI" type="date" use="required">
+            <annotation>
+                <documentation> Data, iki kurios imtinai pateikiami duomenys
+                    (Maksimali lauko KDATA reikšmė).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="BN_KOD" use="required">
+            <annotation>
+                <documentation> Naujas įstaigos kodas (centrinio banko).</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <length value="5"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="IR_VISO" type="int" use="required">
+            <annotation>
+                <documentation> Bendras perduodamų įrašų skaičius
+                    (IR_ATD+IR_UZD+IR_ANUL+IR_KOR).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_ATD" type="int" use="required">
+            <annotation>
+                <documentation> Atidaromų sąskaitų skaičius.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_UZD" type="int" use="required">
+            <annotation>
+                <documentation> Uždaromų sąskaitų skaičius.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_ANUL" type="int" use="required">
+            <annotation>
+                <documentation> Šalinamų sąskaitų skaičius (tarp jų IR_ANKITI).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_ANKITI" type="int" use="required">
+            <annotation>
+                <documentation> Nepatvirtintų (šalinamų) sąskaitų iš kitų šaltinių
+                    skaičius.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_KOR" type="int" use="required">
+            <annotation>
+                <documentation> Tikslinamų (koreguojamų) sąskaitų skaičius
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_BANKE" type="int" use="required">
+            <annotation>
+                <documentation> Bendras šiuo metu (datai FD) įstaigoje atidarytų asmenų
+                    sąskaitų, teiktinų GAVĖJUI, skaičius.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    <complexType name="SaskaitaT">
+        <attribute name="DATA" use="required" type="date">
+            <annotation>
+                <documentation>GAVĖJUI teikiamo įrašo suformavimo data ISO formatu:
+                    MMMM-mm-dd, kur MMMM – metai, mm – mėnuo, dd – diena, pvz.:
+                    2010-12-31.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="B_KOD">
+            <annotation>
+                <documentation> B_KOD – senas istaigos kodas – 00xxx , kur pirmieji du
+                    ženklai – nuliai; xxx - įstaigos senojo devynių ženklų kodo (260101xxx)
+                    paskutiniai 3 ženklai (pildomas, jei TEIKĖJAS tokį kodą turėjo).
+                </documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <length value="5"/>
+                    <pattern value="00\d{3}"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="BN_KOD" use="required">
+            <annotation>
+                <documentation> Naujas įstaigos kodas – TEIKĖJO naujasis penkių ženklų
+                    kodas.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <length value="5"/>
+                    <pattern value="\d{5}"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="I_KOD">
+            <annotation>
+                <documentation> Asmens kodas, juridinių asmenų devyniaženklis kodas;
+                    ūkininko ūkiui Ūkininkų ūkių registro suteiktas septyniaženklis ūkio
+                    kodas arba ūkininko, kurio vardu registruotas ūkis, asmens kodas;
+                    advokato, antstolio, notaro asmens kodas; užsienio valstybės juridinio asmens kodas; fizinio asmens kodas; mokesčių mokėtojo identifikacinis numeris. Asmeniui identifikuoti būtinai
+                    nurodomas asmens požymis (I_POZ)</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="integer">
+                    <maxExclusive value="11"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="I_POZ" use="required">
+            <annotation>
+                <documentation>Asmens požymis, apibūdinantis asmens priklausomybę
+                    vienai iš grupių: 1 – juridinis asmuo, registruotas Juridinių asmenų
+                    registre; Lietuvos Respublikoje steigiamas juridinis asmuo; 2 –
+                    ūkininkų ūkiai, registruoti Ūkininkų ūkių registre; ūkininkai, kurių
+                    vardu registruoti ūkiai; 3 –  advokatai, antstoliai, notarai; 4 – užsienio valstybių
+                    juridiniai ir fiziniai asmenys; fiziniai asmenys; mokesčių mokėtojų
+                    identifikaciniai numeriai.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="integer">
+                    <whiteSpace value="collapse"/>
+                    <minInclusive value="1"/>
+                    <maxInclusive value="4"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="S_TYP" use="required">
+            <annotation>
+                <documentation>Įstaigoje asmenims atidarytos sąskaitų rūšis: 1 – atsiskaitomoji (einamoji)
+                    sąskaita, 4 – indėlio sąskaita, 6 – paskolos sąskaita, 7 –
+                    kaupiamoji sąskaita, 8 – mokėjimo kortelės sąskaita, 9 – kita
+                    sąskaita. Sąskaitos rūšis 7 (kaupiamoji sąskaita) galima tik tuo
+                    atveju, kai rekvizitai I_POZ=1 ir I_KOD=0.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="integer">
+                    <enumeration value="1"/>
+                    <enumeration value="4"/>
+                    <enumeration value="6"/>
+                    <enumeration value="7"/>
+                    <enumeration value="8"/>
+                    <enumeration value="9"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="S_NR" use="required">
+            <annotation>
+                <documentation>Sąskaitos numeris.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <maxLength value="20"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="V_KOD" use="required">
+            <annotation>
+                <documentation> Valiutos raidinis triženklis kodas pagal ISO valiutų
+                    standartą.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <length value="3"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="S_ADAT" type="date" use="required">
+            <annotation>
+                <documentation>Sąskaitos atidarymo data.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_UDAT" type="date">
+            <annotation>
+                <documentation> Sąskaitos uždarymo data. S_UDAT turi būti tokia pat
+                    arba vėlesnė už S_ADAT (atidarymo datą).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="DEF">
+            <annotation>
+                <documentation> Šis laukas pildomas, kai reikia taisyti (tikslinti)
+                    arba šalinti anksčiau GAVĖJUI perduotus Duomenis arba paneigti
+                    sąskaitos, apie kurios buvimą GAVĖJAS žino iš kito šaltinio,
+                    atidarymo/uždarymo faktą.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <maxLength value="4"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="KDATA" type="date" use="required">
+            <annotation>
+                <documentation> Duomenų įvedimo (koregavimo) kompiuterinė data.
+                    Formuojant įrašą pirmą kartą, ši data turi sutapti su sąskaitos
+                    atidarymo data.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="I_PAV">
+            <annotation>
+                <documentation>Asmens pavadinimas arba vardas ir pavardė. Tik
+                    pasikeitus juridinio asmens pavadinimui pateikiamas duomenų
+                    patikslinimas.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <maxLength value="120"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="I_ADR">
+            <annotation>
+                <documentation> Asmens adresas. Pasikeitus adresui ar patikslinus
+                    adresą, patikslinti duomenys neperduodami GAVĖJUI. Jeigu TEIKĖJAS
+                    neturi duomenų apie asmens adresą, tuomet lauke I_ADR rašoma „*“
+                    (žvaigždutė).</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <maxLength value="150"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="SALIS">
+            <annotation>
+                <documentation>Užsienio valstybės, kurioje yra registruotas asmuo,
+                    raidinis dviženklis kodas pagal ISO šalių standartą.</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <length value="2"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+    </complexType>
+    <complexType name="AtsakymuLydrastisT">
+        <sequence>
+            <element name="SaskaitosKlaidos" type="vmi:SaskaitosKlaidaT" minOccurs="1"
+                maxOccurs="unbounded"> </element>
+        </sequence>
+        <attribute name="NR" type="int" use="required">
+            <annotation>
+                <documentation> TEIKĖJO suteiktas perduodamo lydraščio unikalus eilės
+                    numeris.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="PATEIKIMO_ID" type="int">
+            <annotation>
+                <documentation> Gavėjo pateiktam duomenų rinkiniui suteiktas unikalus
+                    identifikatorius, kuris buvo grąžintas Teikėjui priėmus duomenis. Šis
+                    atributas paliekamas tuščiu kai užklausimą inicijuoja VMI.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="GDATA" type="date" use="required">
+            <annotation>
+                <documentation> Gauto Duomenų rinkinio apdorojimo data.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="BN_KOD" use="required">
+            <annotation>
+                <documentation> Naujas įstaigos kodas (centrinio banko).</documentation>
+            </annotation>
+            <simpleType>
+                <restriction base="string">
+                    <length value="5"/>
+                </restriction>
+            </simpleType>
+        </attribute>
+        <attribute name="IR_VISO" type="int" use="required">
+            <annotation>
+                <documentation> Bendras perduodamų įrašų skaičius
+                    (IR_ATD+IR_UZD+IR_ANUL+IR_KOR).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_ATD" type="int" use="required">
+            <annotation>
+                <documentation> Atidaromų sąskaitų skaičius.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="K_ATD" type="int" use="required">
+            <annotation>
+                <documentation> Klaidingų atidaromų sąskaitų įrašų skaičius.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_UZD" type="int" use="required">
+            <annotation>
+                <documentation> Uždaromų sąskaitų skaičius.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="K_UZD" type="int" use="required">
+            <annotation>
+                <documentation> Klaidingų uždaromų sąskaitų įrašų skaičius.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_KOR" type="int" use="required">
+            <annotation>
+                <documentation> Tikslinamų (koreguojamų) sąskaitų skaičius
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="K_KOR" type="int" use="required">
+            <annotation>
+                <documentation> Klaidingų koreguojamų sąskaitų įrašų skaičius.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_ANUL" type="int" use="required">
+            <annotation>
+                <documentation> Šalinamų sąskaitų įrašų skaičius.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="K_ANUL" type="int" use="required">
+            <annotation>
+                <documentation> Klaidingų šalinamų sąskaitų įrašų skaičius.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_KLAIDA" type="int" use="required">
+            <annotation>
+                <documentation> Bendras klaidingų įrašų skaičius (K_ATD + K_UZD +
+                    K_KOR + K_ANUL).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_DUBLIU" type="int" use="required">
+            <annotation>
+                <documentation> Pakartotinai pateiktų įrašų skaičius (dubliai)
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="IR_KITI" type="int" use="required">
+            <annotation>
+                <documentation> Iš kitų šaltinių žinomų sąskaitų įrašų, pateiktų kartu
+                    su klaidomis, skaičius (su klaidos kodu 53).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_BANKE" type="int" use="required">
+            <annotation>
+                <documentation> Bendras šiuo metu GAVĖJUI žinomų įstaigoje atidarytų
+                    asmenų sąskaitų skaičius (įskaitant paskutinius gautus įrašus ir
+                    neįskaitant iš kitų šaltinių žinomas sąskaitas bei klaidingai
+                    pateiktas TEIKĖJO sąskaitas)</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_KITI" type="int" use="required">
+            <annotation>
+                <documentation> Bendras šiuo metu GAVĖJUI iš kitų šaltinių žinomų ir
+                    TEIKĖJO nepatvirtintų (nešalintų) sąskaitų skaičius</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_KLAIDU" type="int" use="required">
+            <annotation>
+                <documentation> Bendras GAVĖJO nustatytų iš TEIKĖJO gautų klaidingų
+                    sąskaitų, kurių dar neištaisė TEIKĖJAS, skaičius, įskaitant
+                    paskutines (IR_KLAIDA laukas)</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    <complexType name="SaskaitosKlaidaT">
+        <attribute name="GDATA" type="date">
+            <annotation>
+                <documentation> Teikėjo pateikto pagrindinio duomenų rinkinio
+                    apdorojimo data.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="DATA" type="date">
+            <annotation>
+                <documentation> GAVĖJUI teikiamo įrašo suformavimo data ISO formatu:
+                    MMMM-mm-dd, kur MMMM – metai, mm – mėnuo, dd – diena, pvz.:
+                    2010-12-31.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="B_KOD" type="string">
+            <annotation>
+                <documentation> B_KOD – senas įstaigos kodas – 00xxx , kur pirmieji du
+                    ženklai – nuliai; xxx - įstaigos senojo devynių ženklų kodo (260101xxx)
+                    paskutiniai 3 ženklai (pildomas, jei TEIKĖJAS tokį kodą turėjo).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="BN_KOD" type="string">
+            <annotation>
+                <documentation> Naujas įstaigos kodas – TEIKĖJO naujasis penkių ženklų
+                    kodas.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="I_KOD" type="integer">
+            <annotation>
+                <documentation> Asmens kodas, juridinių asmenų devyniaženklis kodas;
+                    ūkininko ūkiui Ūkininkų ūkių registro suteiktas septyniaženklis ūkio
+                    kodas arba ūkininko, kurio vardu registruotas ūkis, asmens kodas;
+                    advokato, antstolio, notaro asmens kodas; užsienio
+                    valstybės juridinio asmens kodas; fizinio asmens kodas; mokesčių
+                    mokėtojo identifikacinis numeris. Asmeniui identifikuoti būtinai
+                    nurodomas asmens požymis (I_POZ)</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="I_POZ" type="integer">
+            <annotation>
+                <documentation> Asmens požymis, apibūdinantis asmens priklausomybę
+                    vienai iš grupių: 1 – juridinis asmuo, registruotas Juridinių asmenų
+                    registre; Lietuvos Respublikoje steigiamas juridinis asmuo; 2 –
+                    ūkininkų ūkiai, registruoti Ūkininkų ūkių registre; ūkininkai, kurių
+                    vardu registruoti ūkiai; 3 –advokatai, antstoliai,  notarai; 4 – užsienio valstybių
+                    juridiniai ir fiziniai asmenys; fiziniai asmenys; mokesčių mokėtojų
+                    identifikaciniai numeriai.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_TYP" use="required" type="integer">
+            <annotation>
+                <documentation> Įstaigoje asmenims atidarytos sąskaitų rūšis: 1 – atsiskaitomoji (einamoji)
+                    sąskaita, 4 – indėlio sąskaita, 6 – paskolos sąskaita, 7 –
+                    kaupiamoji sąskaita, 8 – mokėjimo kortelės sąskaita, 9 – kita
+                    sąskaita. Sąskaitos rūšis 7 (kaupiamoji sąskaita) galima tik tuo
+                    atveju, kai rekvizitai I_POZ=1 ir I_KOD=0.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_NR" use="required" type="string">
+            <annotation>
+                <documentation>Sąskaitos numeris.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="V_KOD" use="required" type="string">
+            <annotation>
+                <documentation> Valiutos raidinis triženklis kodas pagal ISO valiutų
+                    standartą.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_ADAT" type="date" use="required">
+            <annotation>
+                <documentation>Sąskaitos atidarymo data.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="S_UDAT" type="date">
+            <annotation>
+                <documentation> Sąskaitos uždarymo data. S_UDAT turi būti tokia pat
+                    arba vėlesnė už S_ADAT (atidarymo datą).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="DEF" type="string">
+            <annotation>
+                <documentation> Šis laukas pildomas, kai reikia taisyti (tikslinti)
+                    arba šalinti anksčiau GAVĖJUI perduotus Duomenis arba paneigti
+                    sąskaitos, apie kurios buvimą GAVĖJAS žino iš kito šaltinio,
+                    atidarymo/uždarymo faktą.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="KDATA" type="date" use="required">
+            <annotation>
+                <documentation> Duomenų įvedimo (koregavimo) kompiuterinė data.
+                    Formuojant įrašą pirmą kartą, ši data turi sutapti su sąskaitos
+                    atidarymo data.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="I_PAV" type="string">
+            <annotation>
+                <documentation> Asmens pavadinimas arba vardas ir pavardė. Tik
+                    pasikeitus juridinio asmens pavadinimui pateikiamas duomenų
+                    patikslinimas.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="I_ADR" type="string">
+            <annotation>
+                <documentation> Asmens adresas. Pasikeitus adresui ar patikslinus
+                    adresą, patikslinti duomenys neperduodami GAVĖJUI. Jeigu TEIKĖJAS
+                    neturi duomenų apie asmens adresą, tuomet lauke I_ADR rašoma „*“
+                    (žvaigždutė).</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="SALIS" type="string">
+            <annotation>
+                <documentation> Sąskaitos savininko šalies kodas</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="KLAIDA" type="string">
+            <annotation>
+                <documentation>Lauke surašomi visi įrašo klaidų kodai, kurie vienas
+                    nuo kito atskiriami kabliataškiais.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    <element name="Lydrastis" type="vmi:LydrastisT"/>
+    <element name="AtsakymuLydrastis" type="vmi:AtsakymuLydrastisT"/>
+</schema>
